@@ -1,4 +1,4 @@
-mod prelude {
+pub mod prelude {
     use std::collections::HashMap;
 
     const MAPPING: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/mapping.bin"));
@@ -8,9 +8,15 @@ mod prelude {
 
         mapping.remove(connector)
     }
+
+    pub fn get_connector_list() -> Vec<String> {
+        let mapping: HashMap<&str, HashMap<&str, &str>> = bincode::deserialize(MAPPING).unwrap();
+
+        mapping.keys().map(|s| s.to_string()).collect()
+    }
 }
 
-mod wasm {
+pub mod wasm {
     use super::*;
     use wasm_bindgen::prelude::*;
 
@@ -20,8 +26,4 @@ mod wasm {
 
         mapping.get(error_code).map(|s| s.to_string())
     }
-}
-
-#[cfg(test)]
-mod tests {
 }
